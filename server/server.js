@@ -1,3 +1,6 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
@@ -31,11 +34,14 @@ await connectDB();
 
 const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // --- Security & core middleware ---
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || true,
     credentials: true,
   })
 );
@@ -82,6 +88,17 @@ app.use("/api/incubators", incubatorRoutes);
 app.use("/api/university", universityRoutes);
 app.use("/api/admin", adminRoutes);
 // app.use("/api/users", userRoutes);
+
+// Serve React app in production
+if (process.env.NODE_ENV === "production") {
+  const clientPath = path.join(__dirname, "../client/dist");
+
+  app.use(express.static(clientPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientPath, "index.html"));
+  });
+}
 
 app.use(notFound);
 app.use(errorHandler);
