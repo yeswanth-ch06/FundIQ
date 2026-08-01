@@ -1,0 +1,15 @@
+import mongoose from "mongoose";
+
+const messageSchema = new mongoose.Schema(
+  {
+    conversationId: { type: String, required: true, index: true }, // sorted pair of user ids
+    sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    recipient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    content: { type: String, required: true },
+    attachments: [{ url: String, publicId: String, originalName: String }],
+    isRead: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Message", messageSchema);
