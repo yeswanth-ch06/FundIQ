@@ -91,7 +91,7 @@ app.use("/api/admin", adminRoutes);
 
 // Serve React app in production
 if (process.env.NODE_ENV === "production") {
-  const clientPath = path.join(__dirname, "../client/src");
+  const clientPath = path.join(__dirname, "../client/");
 
   app.use(express.static(clientPath));
 
